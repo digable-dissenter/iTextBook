@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+    
+       
+			{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+		<hr><span id=breadcrumb>Location: Help</span><hr>
+				<iframe src="{{filename}}" frameBorder="0" WIDTH=100% HEIGHT=600></iframe> 
+			{% else %}
+					<p>Error Loading PDF.</p>
+			{% endif %}
+      
+   
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+  	 <hr><span id=breadcrumb>Location:Users</span><hr>
+   
+        <h2>Users</h2>
+        {% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+				{% if user.is_staff %}
+				{% if message %}<b><i> {{message}}</b></i><hr> {% endif %}
+				{% if user_list %}
+				<table>
+					<tr><th>Username</th><th>Email</th><th>Date Joined</th><th>Active</th><th>Admin</th></tr>
+								
+					{% for user1 in user_list %}
+					<tr>
+					<td>{{ user1.username }}</td><td>{{ user1.email }}</td><td>{{ user1.date_joined }}</td><td>{% if user1.is_active %}Yes{% else %}No{% endif %}</td><td>{% if user1.is_staff %}Yes{% else %}No{% endif %}</td>
+					{% ifnotequal user user1 %}
+					<span style="float:right";><td><a href="{% url  book.views.delete_user user1.username %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="Delete User" width="15" height="15"/></a></td><td>{% if user1.is_staff %}<a href="{% url  book.views.unadmin_user user1.username %}">Remove Admin </a>{% else %}<a href="{% url  book.views.admin_user user1.username %}">Make Admin </a>{% endif %}</td></span>
+					{% endifnotequal %}
+					</tr>
+					{% endfor %}</table>
+					{% else %}
+					<p>No users yet!</p>
+				{% endif %}<hr>
+				<b><a href="/accounts/register/"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add User" width="15" height="15"/>User</a></b> 
+		{% endif %}
+		{% endif %}
+			<br>       
+			<hr>
+ {% endblock %}

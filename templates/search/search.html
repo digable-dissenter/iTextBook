@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+   
+	<hr><span id=breadcrumb>Location:Search<hr>
+</span><br>
+
+
+         {% if query %}
+           <b>Search Results - {{query}}</b><hr>
+            
+			
+            {% for result in page.object_list %}
+           
+				{% if result.object.description %}
+				
+                <p>
+                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.name }}</a>
+                    - Course                </p>
+                 {% elif result.object.topic %}
+                 
+                 <p>
+                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.name }}</a>
+                   - Subtopic under {{ result.object.topic.course }} / {{ result.object.topic }} 
+                </p>
+                {% endif %}<hr>
+            {% empty %}
+            <hr>
+                <p>No results found.</p>
+             
+            {% endfor %}
+
+            {% if page.has_previous or page.has_next %}
+                <div>
+                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                    |
+                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+        {% endif %}
+  
+{% endblock %}

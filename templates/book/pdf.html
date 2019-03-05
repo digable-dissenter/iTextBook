@@ -1,0 +1,18 @@
+{% extends "book/base.html" %}
+
+{% block content %}
+
+  <link rel="stylesheet" href="{{MEDIA_URL}}style1.css" type="text/css" media="screen" charset="utf-8" />
+     <div class="main">
+        <div id="list">
+			{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				{% if response %}
+				 <embed height="100%" width="100%"  name="plugin" src='/home/julian/itextbook/media/byteofpython_120.pdf'  type="application/pdf">
+					{% endif %}
+				{% else %}
+					<p>Error Loading PDF.</p>
+			{% endif %}
+        </div>
+    </div>
+{% endblock %}

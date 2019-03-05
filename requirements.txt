@@ -1,0 +1,4 @@
+Django==1.4
+django-registration==1.7
+whoosh==2.4.1
+django-haystack==1.2

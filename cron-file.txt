@@ -1,0 +1,1 @@
+00 09-18 * * * python /home/itextbook/itextbook/manage.py update_index

@@ -1,0 +1,25 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>   
+   <script src="{{MEDIA_URL}}js/jquery.min.js"></script>
+     <script type="text/javascript" src="{{MEDIA_URL}}js/allowtab.js"></script>  
+    <div class="main">
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				<h3>Coding Questions ({{subtopic.name}})</h3> <hr>
+				{% if attempt %}
+				<b>Attempt Results</b><hr>
+				Question:<br>{{attempt.question}}<hr>
+				Code:
+				<textarea class="tab" name="code" rows="8" cols="37">{% for line in f %}{{line}}{% endfor %}</textarea>
+				
+				<hr>
+				Score:{{attempt.score}}<hr>
+				Feedback:<br>{{attempt.feedback}}<hr>
+				<a href="{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" target="rightbox"> Back to MCQ </a>
+
+			{% endif %}
+			{% endif %}
+   </div>
+{% endblock %}

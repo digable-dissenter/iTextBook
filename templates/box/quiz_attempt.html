@@ -1,0 +1,44 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>   
+       <script src="{{MEDIA_URL}}js/jquery.min.js"></script>
+     <script type="text/javascript" src="{{MEDIA_URL}}js/allowtab.js"></script>   
+      <script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shCore.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushPython.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushJava.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushPerl.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushCpp.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}syntaxhighlighter/styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	 
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				<h3>Coding Questions ({{subtopic.name}})</h3> <hr>
+				{% if attempt %}
+				<b>Attempt Results</b><hr>
+				Question:<br><i>{{attempt.question}}</i><hr>
+				Code:
+				{% ifequal subtopic.topic.course.language "python3.2" %}<pre class="brush: python;">{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "java" %}<pre class="brush: java;">{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "c" %}<pre class="brush: cpp;">{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "perl" %}<pre class="brush: perl;">{% endifequal %}
+						{% for line in f %}{{line}}{% endfor %}</pre>
+				
+				<hr>
+				Score:<br>
+				{% if 50 > attempt.score|add:"0"  %}
+						<span style='color:red'>{{attempt.score}}%</span>
+					{% elif 50 == attempt.score|add:"0"%}
+						<span style='color:orange'>{{attempt.score}}%</span>
+					{% else %}
+						<span style='color:green'>{{attempt.score}}%</span>
+					{% endif %}<hr>
+				Feedback:<br>{{attempt.feedback}}<hr>
+				<a href="{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" target="rightbox"><img src="{{MEDIA_URL}}icons/back.jpg" alt="back" width="16" height="16"/>Coding Questions </a>
+
+			{% endif %}
+			{% endif %}
+
+{% endblock %}

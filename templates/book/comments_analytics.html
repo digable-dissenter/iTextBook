@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+	<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics course.pk %}">{{course.name}}</a> / <a href="{% url book.views.general_analytics  course.pk%}">Usage Analytics</a> / User Comments Use</span><hr>
+ 
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+			<b>Comment Analysis</b><hr>
+					{% if comment_list %}
+					<b>Student:</b>{{user_analytics}}<hr>
+						{% for comment in comment_list%}
+					<b>Topic/Subtopic:</b>{{comment.subtopic.topic.name}}/{{comment.subtopic.name}}	<br>
+					<b>Comment:</b>{{comment.comment_text }}<br>
+					<b>Added:</b>{{comment.created}}<br>
+				<hr>			
+						{% endfor %}
+								
+					{% else %}
+						<p>No Comments Attempted Yet!</p>
+					{% endif %}
+					
+			
+			{% endif %}
+
+{% endblock %}

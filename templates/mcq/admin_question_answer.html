@@ -1,0 +1,55 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+    <div class="main">
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_superuser %} 
+			{{subtopic.topic.name}} / {{subtopic.name}}<br>	
+			<b>{{message}}</b>
+				{% if create_mcquestion_form %}
+				 <form enctype="multipart/form-data" action="{% url mcq.views.create_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+                <p>{{  create_mcquestion_form.subtopic.as_hidden }}{{ create_mcquestion_form.question}}</p><hr>
+                Answer 1:<br><textarea class="tab" name="Answer1" rows="1" cols="37"></textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice1" value="answer_choice1" />
+						<label for="answer_choice1">Correct	</label></p><hr>
+						Answer 2:<br><textarea class="tab" name="Answer2" rows="1" cols="37"></textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice2" value="answer_choice2" />
+						<label for="answer_choice2">Correct	</label><hr>
+				Answer 3:<br><textarea class="tab" name="Answer3" rows="1" cols="37"></textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice3" value="answer_choice3" />
+						<label for="answer_choice3">Correct	</label><hr>
+               				       
+                </div><!-- end message -->
+                <div id="submit">
+				<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url mcq.views.subtopic_mcq subtopic.topic.course.id subtopic.topic.id subtopic.pk %}' " />	
+				<input type="submit" value="Add MCQ"></div>
+            </form>
+			{% endif %}  
+			{% if edit_mcq_form %}
+				 <form enctype="multipart/form-data" action="{% url mcq.views.edit_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+                <p>{{  edit_mcq_form.subtopic.as_hidden }}{{ edit_mcq_form.question}}</p>
+                {% for answer in answer_list %}
+				  Answer{{ forloop.counter }}:<br><textarea class="tab" name="Answer{{forloop.counter}}" rows="1" cols="37">{{answer.answer}}</textarea><br>
+						{% if answer.correct %}
+					<input type="radio" name="answer_choice" id="answer_choice{{forloop.counter}}" value="answer_choice{{forloop.counter}}" checked="checked"/>
+						<label for="answer_choice{{forloop.counter}}">Correct	</label></p><hr>
+						{% else %}
+					<input type="radio" name="answer_choice" id="answer_choice{{forloop.counter}}" value="answer_choice{{forloop.counter}}" />
+						<label for="answer_choice{{forloop.counter}}">Correct	</label></p><hr>
+						{% endif %}  
+				{% endfor %}     
+                </div><!-- end message -->
+                <div id="submit">
+				<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url mcq.views.subtopic_mcq subtopic.topic.course.id subtopic.topic.id subtopic.pk %}' " />
+				<input type="submit" value="Update MCQ"></div>
+            </form>
+			{% endif %}			
+			{% else %}
+			<p>You are not authorized to view this page</p>
+			{% endif %}
+			
+   </div>
+{% endblock %}

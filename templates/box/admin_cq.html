@@ -1,0 +1,200 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+   
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_superuser %} 	
+			<b>{{message}}</b>	
+				{% if create_cquestion_form %}
+				 <form enctype="multipart/form-data" action="{% url box.views.create_cq subtopic.topic.course.id subtopic.topic.id subtopic.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+               {{  create_cquestion_form.subtopic.as_hidden }}Question:<br>{{ create_cquestion_form.text}}<hr>
+               <b><span style="color:red">{{keyword_error}}</span></b><br>
+               Keyword:<br><textarea class="tab" name="keyword" rows="1" cols="10">{{keyword}}</textarea><br>
+              <b><span style="color:red">{{min_use_error}}</span></b><br>
+              Min Use:<br><textarea class="tab" name="min_use" rows="1" cols="5">{{min_use}}</textarea><br>
+              
+              <hr>
+              Test Cases<br>
+             {% if test_cases_error %} <b><span style="color:red">{{test_cases_error}}</span></b><br>{% endif %}
+              <table><th>Case</th><th>Input</th><th>Output</th>
+              <tr>
+				  <td>1</td>
+				  <td><b><span style="color:red">{{testinput1_error}}</span></b><br>
+						<textarea class="tab" name="testinput1" rows="1" cols="5">{{testinput1}}</textarea>
+				  </td>
+				  <td><b><span style="color:red">{{testoutput1_error}}</span></b><br>
+					<textarea class="tab" name="testoutput1" rows="1" cols="5">{{testoutput1}}</textarea>
+				  </td>
+              </tr>
+              <tr>
+				  <td>2</td>
+				   <td><b><span style="color:red">{{testinput2_error}}</span></b><br>
+						<textarea class="tab" name="testinput2" rows="1" cols="5">{{testinput2}}</textarea>
+				   </td>
+				  <td><b><span style="color:red"> {{testoutput2_error}}</span></b><br>
+						<textarea class="tab" name="testoutput2" rows="1" cols="5">{{testoutput2}}</textarea>
+				  </td>
+              </tr>
+              <tr>
+				  <td>3</td>
+				  <td> <b><span style="color:red">{{testinput3_error}}</span></b>
+						<br><textarea class="tab" name="testinput3" rows="1" cols="5">{{testinput3}}</textarea>
+					</td>
+					<td><b><span style="color:red">{{testoutput3_error}}</span></b><br>
+					<textarea class="tab" name="testoutput3" rows="1" cols="5">{{testoutput3}}</textarea>
+					</td>
+			</tr>
+              </table>      <hr>
+                </div><!-- end message -->
+                <div id="submit">
+				<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk  %}' " />
+				<input type="submit" value="Add CQ"></div>
+            </form>
+			{% endif %} 
+			 
+			{% if edit_cq_form %}
+				 <form enctype="multipart/form-data" action="{% url box.views.edit_cq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+                <p>{{ edit_cq_form.subtopic.as_hidden }}{{ edit_cq_form.text}}</p>
+                Keywords<br>
+              <table><th>Num</th><th>Keyword</th><th>MinUse</th>
+                {% for keyword in keyword_list %}
+				 <tr>
+				  <td>{{forloop.counter}}</td>
+				  <td>
+					  <textarea class="tab" name="keyword{{forloop.counter}}" rows="1" cols="10">{{keyword.text}}</textarea>
+				  </td>
+				  <td>
+					<textarea class="tab" name="min_use{{forloop.counter}}" rows="1" cols="3">{{keyword.min_use}}</textarea>
+				  </td>
+				  <td>
+					<a href="{% url box.views.delete_keyword subtopic.topic.course.id subtopic.topic.id subtopic.id question.id keyword.id %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a>
+				  </td>
+              </tr> 
+              
+              	{% endfor %} 
+              	<tr>
+              	<td></td><td></td><td></td>
+              	<td><a href="{% url box.views.add_keyword subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add keyword" width="16" height="16"/></a><hr>
+            </td>
+              </tr>	       
+              	</table> 
+              
+				<hr>  
+			
+        Test Cases<br>
+         {% if test_cases_error %} <b><span style="color:red">{{test_cases_error}}</span></b><br>{% endif %}
+             
+              <table><th>Case</th><th>Input</th><th>Output</th>
+				{% for testcase in test_case_list %}
+				  <tr>
+				  <td>{{forloop.counter}}</td>
+				  <td><b><span style="color:red">{% ifequal forloop.counter 1 %}{{testinput1_error}}{% endifequal %}
+				  {% ifequal forloop.counter 2 %}{{testinput2_error}}{% endifequal %}
+				  {% ifequal forloop.counter 3 %}{{testinput3_error}}{% endifequal %}</span></b>
+					  <br>
+						<textarea class="tab" name="testinput{{forloop.counter}}" rows="1" cols="5">{{testcase.test_input}}</textarea>
+				  </td>
+				  <td><b><span style="color:red">{% ifequal forloop.counter 1 %}{{testoutput1_error}}{% endifequal %}
+				  {% ifequal forloop.counter 2 %}{{testoutput2_error}}{% endifequal %}
+				  {% ifequal forloop.counter 3 %}{{testoutput3_error}}{% endifequal %}</span></b><br>
+					<textarea class="tab" name="testoutput{{forloop.counter}}" rows="1" cols="5">{{testcase.test_output}}</textarea>
+				 </td>
+				 <td>
+					<a href="{% url box.views.delete_testcase subtopic.topic.course.id subtopic.topic.id subtopic.id question.id testcase.id %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a>
+				  </td>
+              </tr>   
+				{% endfor %}
+				<tr>
+              	<td></td><td></td><td></td>
+              	<td><a href="{% url box.views.add_testcase subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add testcase" width="16" height="16"/></a><hr>
+            </td>
+              </tr>   
+			</table>     
+				<hr>
+                </div><!-- end message -->
+                <div id="submit">
+				<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk  %}' " />
+				<input type="submit" value="Update CQ"></div>
+            </form>
+			{% endif %}	
+			
+			{% if add_keyword_form %}
+			 
+				 <form enctype="multipart/form-data" action="{% url box.views.add_keyword subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+					
+                <p>{{add_keyword_form.subtopic.as_hidden }}{{ add_keyword_form.text}}</p><hr>
+                <b>Add Keyword</b><br>
+               {% if keyword_error %} <b><span style="color:red">{{keyword_error}}</span></b><br>{% endif %}
+                Keyword:<br><textarea class="tab" name="keyword" rows="1" cols="25"></textarea><br>
+             {% if min_use_error %}<b><span style="color:red">{{min_use_error}}</span></b><br>{% endif %}  
+              Min Use:<br><textarea class="tab" name="min_use" rows="1" cols="3"></textarea><hr>
+				 <div id="submit">
+					 <input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url box.views.edit_cq subtopic.topic.course.id subtopic.topic.id subtopic.pk question.id %}' " />
+					<input type="submit" value="Add Keyword"></div>	 
+			        </form><hr>
+		     Current Keywords<br>
+              <table><th>Num</th><th>Keyword</th><th>MinUse</th>
+                {% for keyword in keyword_list %}
+				 <tr>
+				  <td>{{forloop.counter}}</td>
+				  <td>
+					  <textarea class="tab" name="keyword{{forloop.counter}}" rows="1" cols="10">{{keyword.text}}</textarea>
+				  </td>
+				  <td>
+					<textarea class="tab" name="min_use{{forloop.counter}}" rows="1" cols="3">{{keyword.min_use}}</textarea>
+				  </td>
+				  <td>
+					<a href="{% url box.views.delete_keyword subtopic.topic.course.id subtopic.topic.id subtopic.id question.id keyword.id %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a>
+				  </td>
+              </tr> 
+              
+              	{% endfor %} 
+      	</table> 
+              
+				<hr>  
+			{% endif %}
+			
+				{% if add_testcase_form %}
+			
+				 <form enctype="multipart/form-data" action="{% url box.views.add_testcase subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+                <p>{{add_testcase_form.subtopic.as_hidden }}{{ add_testcase_form.text}}</p><hr>
+                <b>Add TestCase</b><br>
+               {% if testinput_error %}<b><span style="color:red"> {{testinput_error}}</span></b><br>{% endif %}
+                Test Input:<br><textarea class="tab" name="testinput" rows="1" cols="5">{{testinput}}</textarea><br>
+             {% if testoutput_error %}<b><span style="color:red">{{testoutput_error}}</span></b><br>{% endif %}  
+              Test Output:<br><textarea class="tab" name="testoutput" rows="1" cols="5"></textarea><hr>
+				 <div id="submit">
+					 <input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url box.views.edit_cq subtopic.topic.course.id subtopic.topic.id subtopic.pk question.id %}' " />
+					<input type="submit" value="Add TestCase"></div>	 
+			        </form><hr>
+			      Current Test Cases <br>  
+		     <table><th>Case</th><th>Input</th><th>Output</th>
+				{% for testcase in test_case_list %}
+				  <tr>
+				  <td>{{forloop.counter}}</td>
+				  <td>
+						<textarea class="tab" name="testinput{{forloop.counter}}" rows="1" cols="5">{{testcase.test_input}}</textarea>
+				  </td>
+				  <td>
+					<textarea class="tab" name="testoutput{{forloop.counter}}" rows="1" cols="5">{{testcase.test_output}}</textarea>
+				 </td>
+				 <td>
+					<a href="{% url box.views.delete_testcase subtopic.topic.course.id subtopic.topic.id subtopic.id question.id testcase.id %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a>
+				  </td>
+              </tr>   
+				{% endfor %}   
+			</table>     
+				<hr>
+			{% endif %}
+				
+			{% else %}
+				<p>You are not authorized to view this page</p>
+			{% endif %}
+			
+
+{% endblock %}

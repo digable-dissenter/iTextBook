@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+ <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+     <div class="main">
+
+{% load i18n %}
+{% block content %}
+	<hr><span id=breadcrumb>Location:Courses</span>{% if user.is_staff %}<b><a title="Add Course" style="float:right"; href="{% url book.views.create_course  %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Course" width="20" height="20"/>Course</a></b>{% endif %}<hr>
+   	{% if not user.is_authenticated %}
+		Please <a href="/accounts/login/?next=/book/">login</a> 
+	{% endif %}
+	{% if user.is_authenticated %} 	
+		{% if message %} <b><i> {{message}}</b></i><hr> {% endif %}
+			{% if course_list %}
+				{% for course in course_list %}
+					<p ><a href ="{% url book.views.all_topics course.pk %}"><b>{{course.name}}</b></a> {{ course.description }} ({{course.language}}) {% if user.is_staff %}<b style="float:right";> <a title="Edit Course" href="{% url book.views.edit_course course.pk %}"><img src="{{MEDIA_URL}}icons/edit.jpg" width="20" height="20"/>Course</a>
+					<a title="Delete Course" href="{% url book.views.delete_course course.pk %}"><img src="{{MEDIA_URL}}icons/delete.jpg" width="20" height="20"/>Course</a><a title="Manage Topics / Subtopics" href ="{% url book.views.all_topics course.pk %}"><img src="{{MEDIA_URL}}icons/manage.jpg" alt="Manage Topics / Subtopics" width="20" height="20"/>Topics / Subtopics</a></b>{% endif %}</p><a title="{{course.name}}" href ="{% url book.views.all_topics course.pk %}"><img src="{{MEDIA_URL}}{{ course.image }}" width="125" height="125"/></a>
+					<hr>
+				{% endfor %}
+				
+			{% else %}
+				<p>No introductory programming courses added yet!</p>
+			{% endif %}
+			{% if user.is_staff %}<b><a title="Add Course" style="float:right"; href="{% url book.views.create_course  %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Course" width="20" height="20"/>Course</a></b>{% endif %}<br>
+				<hr>
+	{% endif %}     
+    </div>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+{% extends "iframebase.html" %}
+{% block content %}
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/iframe.css" type="text/css" media="screen" charset="utf-8" />
+        <script src="{{MEDIA_URL}}js/jquery.min.js"></script>
+     <script type="text/javascript" src="{{MEDIA_URL}}js/allowtab.js"></script>   
+      <script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shCore.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushPython.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushJava.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushPerl.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushCpp.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}syntaxhighlighter/styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	 
+        	{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/codeform">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+			{%if not question %}No question set for this subtopic yet{% endif %}
+			{%if question %}
+			<h3>Coding Question ({{subtopic.name}})</h3> <hr>
+			<i>{{question.text}}</i>
+			<hr>				
+<!-- Comment form  -->
+		{% if not code %} 
+            <form action="{% url box.views.codeform question.subtopic.topic.course.id question.subtopic.topic.id question.subtopic.pk question.pk%}" method="POST">{% csrf_token %}
+                <div id="message">
+					<b><span style="color:red">{{code_error}}</span></b><br>
+                          Enter Code:<br><textarea class="tab" name="code" rows="8" cols="50"></textarea><br><br>
+						 <!--  Inputs (Optional):<br><textarea name="input" rows="1" cols="50"></textarea> -->
+                    </div><!-- end message -->
+                <div id="submit">
+					<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk %}' " />
+					<input type="submit" value="Run & Submit"></div>
+            </form>
+       {% endif %}
+       {% if code %} 
+                <div id="message">
+                    <hr> Your Code:
+                    {% ifequal subtopic.topic.course.language "python3.2" %}<pre class="brush: python;">{{ code }}</pre>{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "java" %}<pre class="brush: java;">{{ code }}</pre>{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "c" %}<pre class="brush: cpp;">{{ code }}</pre>{% endifequal %}
+                    {% ifequal subtopic.topic.course.language "perl" %}<pre class="brush: perl;">{{ code }}</pre>{% endifequal %}
+						<hr>
+						  <!-- Inputs (Optional):{% if input %}{{ input }}{% else %}None{% endif %} <hr> -->
+                    </div><!-- end message -->
+			<h3>Coding Question Results</h3> <br><hr><b>Score:</b>
+			
+			
+			{% if 50 > score|add:"0"  %}
+						<span style='color:red'>{{score}}%</span>
+					{% elif 50 == score|add:"0"%}
+						<span style='color:orange'>{{score}}%</span>
+					{% else %}
+						<span style='color:green'>{{score}}%</span>
+					{% endif %}
+			<hr>
+			
+			 <!-- <b>Required output:</b>{{test_case_obj.test_output}}<br><b>Your output:</b>{{output}}<br>-->
+			 <b>Test Case Feedback:</b>{{testcase}}<hr>
+			<b>Comments used</b>: {{comments}}<br><b>Keywords used:</b> {{keywords}}<hr>
+			<b>Marks Gained:</b><br>
+			<b><span style="color:green">{{marks_gained}}</span></b><br><br>
+			<b>Marks Lost:</b><br>
+			<b><span style="color:red">{{marks_lost}}</span></b>
+			<hr><a href="{{MEDIA_URL}}{{download_path}}" target="_blank"><img src="{{MEDIA_URL}}icons/download.jpg" alt="download" width="16" height="16"/></a>
+			<a href="{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" target="rightbox"><img src="{{MEDIA_URL}}icons/back.jpg" alt="back" width="16" height="16"/>Coding Questions </a>
+			{% endif %}
+	{% endif %} 
+	{% endif %}
+{% endblock %}

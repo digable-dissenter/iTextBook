@@ -1,0 +1,17 @@
+{% extends "book/base.html" %}
+
+{% block content %}
+
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+     <div class="main">
+        <div id="list">
+			{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+		<iframe src="http://docs.google.com/gview?url={{filename}}&embedded=true" style="width:600px; height:500px;" frameborder="0"></iframe>
+			{% else %}
+					<p>Error Loading PDF.</p>
+			{% endif %}
+        </div>
+        
+    </div>
+{% endblock %}

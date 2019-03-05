@@ -1,0 +1,42 @@
+
+{% extends "iframebase.html" %}
+{% block content %}
+
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/iframe.css" type="text/css" media="screen" charset="utf-8" />
+     <script src="{{MEDIA_URL}}js/jquery.min.js"></script>
+     <script type="text/javascript" src="{{MEDIA_URL}}js/allowtab.js"></script>    
+   <script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shCore.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushPython.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}syntaxhighlighter/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}syntaxhighlighter/styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+ 
+        	{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/codeform">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+			<h3>Codepad </h3> <br>				
+<!-- Comment form  -->
+		{% if not code %} 
+            <form action="{% url box.views.codepad %}" method="POST">{% csrf_token %}
+                <div id="message">
+				<b><span style="color:red">{{code_error}}</span></b><br>
+                          Enter Code:<br><textarea class="tab" name="code" rows="8" cols="50"></textarea><br><br>
+						  Inputs (Optional, one input per line):<br><textarea name="input" rows="3" cols="50"></textarea>
+                    </div><!-- end message -->
+                <div id="submit"><input type="submit" value="Run"></div>
+            </form>
+       {% endif %}
+       {% if code %} 
+                <div id="message">
+                         <hr> Your Code:<pre class="brush: python;">{{ code }}</pre>
+						  <hr>Inputs (Optional):{% if input %}{{ input }}{% else %}None{% endif %} <hr>
+                    </div><!-- end message -->
+            
+			<h3>Sandbox Results</h3> <hr>Output:{{ script_response }} <hr><a href="{{MEDIA_URL}}{{download_path}}" target="_blank"><img src="{{MEDIA_URL}}icons/download.jpg" alt="download" width="16" height="16"/></a>
+			<a href="{% url box.views.codepad %}" target="rightbox"><img src="{{MEDIA_URL}}icons/back.jpg" alt="back" width="16" height="16"/>Codepad </a>
+			<br>
+				
+			{% endif %}
+	{% endif %} 
+
+{% endblock %}
+

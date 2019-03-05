@@ -1,0 +1,43 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+  
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				<h3>Coding Questions ({{subtopic.name}})</h3> <hr>
+			
+				{{message}}
+				{% if cq_list %}
+					<ol>
+						{% for question in cq_list %}
+								<li><b><i>{{ question.text|truncatewords:"10" }}<a href ="{% url box.views.codeform question.subtopic.topic.course.id question.subtopic.topic.id question.subtopic.pk question.pk %}"><span style='color:green'>Attempt Question</span></a></i></b>  
+			{% if user.is_superuser %}
+			<br> 
+				<a href="{% url box.views.edit_cq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="Edit CQ" width="15" height="15"/></a>
+				<a href="{% url box.views.delete_cq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="Delete MCQ" width="15" height="15"/></a>
+				{% endif %}						
+								{% if attempt_list %}
+									<ol>
+									{% for attempt in attempt_list %}
+										{% ifequal attempt.question question  %}
+				<li><a href ="{% url box.views.subtopic_quiz_attempt question.subtopic.topic.course.id question.subtopic.topic.id question.subtopic.pk question.pk attempt.pk %}">Score:{{attempt.score}} </a></li>
+											
+										{% endifequal %}
+									{% endfor %}
+									</ol>
+									
+								{% else %}
+								<p>No attempts yet.</p>
+								{% endif %}
+							</li>
+						{% endfor %}
+				</ol>
+				{% else %}
+					<p>No Coding Questions added yet.</p>
+					
+				{% endif %}
+			
+			{% endif %}
+ 
+{% endblock %}

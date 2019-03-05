@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>{% block title %}iTextBook{% endblock %}</title>
+     <meta name="description" content="{% block meta_description %}{% endblock %}" />
+    <meta name="author" content="{% block meta_author %}{% endblock %}" />
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="{{MEDIA_URL}}css/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	  <div id="container1">
+            <div id="menu">
+            {% block nav-global %}
+                <!-- MENU -->
+                <h3><a href="{% url book.views.main %}">iTextBook</a></h3>
+                {% if user.is_staff %}<a href="{% url book.views.main %}">Courses</a>{% endif %}
+				{% if user.is_staff %}<a href="/accounts/register/">Users</a>{% endif %}
+				{% if user.is_authenticated %}
+					Hi: {{ user.username }}{% if user.is_staff %}[admin]{% endif %}
+					<a href="/accounts/logout/?next={% url book.views.main %}">Log out</a>
+				{% else %}
+					<a href="/accounts/login/?next={% url book.views.main %}">Log in</a> 
+				{% endif %}
+            {% endblock %}
+        </div>
+        
+            
+        <br>
+        <!-- Menu -->
+     
+			
+		
+		<!-- Menu end -->
+		</div>
+        <div id="container">
+			
+            {% block content %}{% endblock %}
+             </div>
+  
+</body>
+</html>
+

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>  
+   	<script type="text/javascript" src="{{MEDIA_URL}}google/jsapi"></script>  
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+					{% if mcq_attmpt_list %}
+						<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - MCQ Analytics</span><hr>
+					{{subtopic.topic.name}} / {{subtopic.name}} -  MCQ Analytics
+						{% for question in question_list%}
+						
+							<hr>
+							{{forloop.counter}}.{{question.question}}<br>
+							Answer:	{% for answer in answer_list %}
+										{% ifequal answer.question question   %}
+											{% if answer.correct   %}
+												<span style='color:green'>{{answer.answer}}</span>
+											{% endif %}
+										{% endifequal %}
+									{% endfor %}
+							<table>
+								<tr><th>User</th><th>Guess</th><th>Score</th><th>Date</th></tr>
+									{% for guess in mcq_attmpt_list%}
+										{% ifequal guess.question question   %}
+											<tr>
+												<td>{{guess.submitted_by}}</td>
+												<td>{{guess.answer_given.answer}}</td>
+												<td>{% if 1 == guess.score%}
+														<span style='color:green'>{{guess.score}}</span>
+													{% else %}
+														<span style='color:red'>{{guess.score}}</span>
+													{% endif %}
+												</td>
+												<td>{{guess.guess_date}}</td>
+												</tr>	
+										{% endifequal %}	
+									{% endfor %}
+							</table>
+						{% endfor %}<hr>
+					
+				
+			{% elif cq_list %}
+			<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - CQ Analytics</span><hr>
+					{{subtopic.topic.name}} / {{subtopic.name}} -  CQ Analytics
+						{% for cq in cq_list%}
+							<hr>
+							{{forloop.counter}}.{{cq.text}}<br>
+							Test Case Output:	{% for testcase in test_case_list %}
+										{% ifequal testcase.question cq   %}
+											{{testcase.test_output}}
+										{% endifequal %}
+									{% endfor %}
+							Keywords Required/Min Use:	{% for keyword in keyword_list %}
+								{% ifequal keyword.question cq   %}
+									{{keyword.text}}/{{keyword.min_use}}
+								{% endifequal %}
+							{% endfor %}
+							<table>
+								<tr><th>User</th><th>Code</th><th>Score</th><th>Feedback</th></tr>
+									{% for attempt in attempt_list%}
+										{% ifequal attempt.question cq   %}
+											<tr>
+												<td>{{attempt.user}}</td>
+												<td>{{attempt.code}}</td>
+												<td>{% if 50 > attempt.score|add:"0"  %}
+														<span style='color:red'>{{attempt.score}}</span>
+													{% elif 50 == attempt.score|add:"0"%}
+														<span style='color:orange'>{{attempt.score}}</span>
+													{% else %}
+														<span style='color:green'>{{attempt.score}}</span>
+													{% endif %}
+												</td>
+												<td>{{attempt.feedback}}</td>
+												</tr>	
+										{% endifequal %}	
+									{% endfor %}
+							</table>
+						{% endfor %}
+					
+					
+					
+				{% elif comment_list %}
+				<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - Comments Analytics</span><hr>
+					{{subtopic.topic.name}} / {{subtopic.name}} -  Comments Analytics<hr>
+							
+							<table>
+								<tr><th>User</th><th>Comment</th><th>Created</th></tr>
+									{% for comment in comment_list%}
+										{% ifequal comment.subtopic subtopic   %}
+											<tr>
+												<td>{{comment.created_by}}</td>
+												<td>{{comment.comment_text}}</td>
+												<td>{{comment.created}}</td>
+											</tr>	
+										{% endifequal %}	
+									{% endfor %}
+							</table>
+					
+    
+					{% else %}
+						<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - Analytics</span><hr>
+					{{subtopic.topic.name}} / {{subtopic.name}} -  Analytics<hr>
+
+					No data to perform analysis on
+					{% endif %}
+				{% endif %}
+   </div>
+{% endblock %}

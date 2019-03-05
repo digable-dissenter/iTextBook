@@ -1,0 +1,42 @@
+{% extends "registration/base.html" %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+
+<h1>Log in</h1><hr>
+<p>iTextBook is an interactive and fun way to learn to code using<br> rich media examples combined with
+       online code execution and evaluation</p>
+{% if form.errors %}
+<p class="error"><span style="color:red">Please correct the errors below:</span>{{form.non_field_errors}}
+</p>
+{% endif %}
+		<form method="post" action="/accounts/login/?next={% url book.views.main %}">{% csrf_token %}               <dl>
+					<dl>
+					<table>
+						{% for field in form %}
+							<tr>
+							<td><dt>{{field.label_tag}}{% if field.field.required %}*{% endif %}</dt></td>
+							<td><dd>{{field}}</dd>
+							{% if field.errors %} <dd class="error" style='color:red'>{{ field.errors}}</dd>{% endif %}</td></tr>
+						{% endfor %}
+					</table>
+				<dt>
+					<input type="submit" value="Log in" />
+				</dt>
+			</dl>
+           </form>
+           <hr><br>
+           <img src="{{MEDIA_URL}}icons/coding.png" alt="python" width="100" height="100"/>
+           <img src="{{MEDIA_URL}}icons/pdf.jpg" alt="perl" width="100" height="100"/>
+           <img src="{{MEDIA_URL}}icons/video.jpg" alt="java" width="100" height="100"/>
+           <img src="{{MEDIA_URL}}icons/notebook.jpg" alt="python" width="100" height="100"/>
+           <img src="{{MEDIA_URL}}icons/forum.png" alt="python" width="100" height="100"/>
+           <img src="{{MEDIA_URL}}icons/test_icon.jpg" alt="python" width="100" height="100"/>
+           
+{% endblock %}
+
+{% block content-related %}
+<p>If you don't have an account, you can <a href="/accounts/register/">sign
+up</a> for one.
+{% endblock %}

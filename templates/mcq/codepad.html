@@ -1,0 +1,34 @@
+{% extends "iframebase.html" %}
+{% block content %}
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/iframe.css" type="text/css" media="screen" charset="utf-8" />
+     <script src="{{MEDIA_URL}}js/jquery.min.js"></script>
+     <script type="text/javascript" src="{{MEDIA_URL}}js/allowtab.js"></script>    
+   
+
+        	{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/codeform">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+			<h3>Codepad </h3> <br>				
+<!-- Comment form  -->
+		{% if not code %} 
+            <form action="{% url box.views.codepad %}" method="POST">{% csrf_token %}
+                <div id="message">
+				
+                          Enter Code:<br><textarea class="tab" name="code" rows="8" cols="37">#enter code here</textarea><br><br>
+						  Inputs (Optional):<br><textarea name="input" rows="1" cols="37">#enter inputs here</textarea>
+                    </div><!-- end message -->
+                <div id="submit"><input type="submit" value="Submit Code"></div>
+            </form>
+       {% endif %}
+       {% if code %} 
+       <form action="{% url box.views.codepad %}" method="POST">{% csrf_token %}
+                <div id="message">
+                          Enter Code:<br><textarea class="tab" name="code" rows="8" cols="37">{{ code }} </textarea><br><br>
+						  Inputs (Optional):<br><textarea name="input" rows="1" cols="37">{{ input }} </textarea>
+                    </div><!-- end message -->
+                <div id="submit"><input type="submit" value="Submit Code"></div>
+            </form>
+			<h3>Sandbox Results</h3> <br><a href="file:{{path}}" target="_blank">Download</a><br>{{ script_response }} 
+			{% endif %}
+	{% endif %} 
+
+{% endblock %}

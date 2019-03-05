@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+   <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics topic.course.pk %}">{{topic.course.name}}</a> / {{ topic.name }} </span><hr>
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				{% if topic %}
+					<li>{% if not user.is_staff %}<a href ="{% url book.views.topic topic.course.id topic.pk %}">{{ topic.name }}</a>{% endif %}
+					{% if user.is_staff %}{{ topic.name }}<span style="float:right";><a title="Edit Topic" href="{% url  book.views.edit_topic topic.course.id topic.pk %}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="edit" width="16" height="16"/></a>
+					<a title="Delete Topic" href="{% url  book.views.delete_topic topic.course.id topic.pk %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a></span>{% endif %}</li>
+						<ul>
+							{% for subtopic in subtopic_list %}
+							 {% if subtopic.topic.id == topic.id %}<hr>
+								<li><a href ="{% url book.views.subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}">{{subtopic.name}}</a>
+								{% if user.is_staff %}<b><span style="float:right";>
+									<a href="{% url book.views.edit_subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="edit" width="15" height="15"/></a>
+													<a href="{% url book.views.delete_subtopic subtopic.topic.course.id subtopic.topic.id subtopic.pk %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="15" height="15"/></a>
+													<a title="Add Coding Question" href="{% url box.views.create_cq subtopic.topic.course.id subtopic.topic.id subtopic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add CQ" width="15" height="15"/>CQ</a>
+													<a title="Add Multiple Choice Question" href="{% url mcq.views.create_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add CQ" width="15" height="15"/>MCQ</a>
+													<a href="{% url book.views.subtopic_mcq_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="MCQ Analytics" width="15" height="15"/>MCQ</a>
+													<a href="{% url book.views.subtopic_cq_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="CQ Analytics" width="15" height="15"/>CQ </a>
+													<a href="{% url book.views.subtopic_comments_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="Comment Analytics" width="15" height="15"/>Comment</a></span></b>{% endif %}</li>
+							{% else %}	
+							No Subtopics yet!					
+
+							{% endif %}
+							
+							{% endfor %}<hr>
+						<li>{% if user.is_staff %}<b><span style="float:right";><a href="{% url  book.views.create_subtopic1 topic.course.id topic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Subtopic" width="15" height="15"/>Subtopic </a></span></b>{% endif %}</li>
+						</ul><hr>
+						
+				{% else %}
+					<p>No topics yet.</p>
+				{% endif %}
+			{% endif %}
+{% endblock %}

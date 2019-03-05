@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}google/jsapi"></script>  
+   <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+       //var data = new google.visualization.DataTable();
+        window.data = new google.visualization.DataTable();
+        data.addColumn('string', 'User');
+        data.addColumn('number', 'MCQ Count');
+        data.addRows([
+          
+          {% for user, mcq_count in mcq_dict.items%}
+                    ['{{user}}',{{mcq_count}}],
+                    {% endfor %}
+        
+        ]);
+		// Set chart options
+				var options = {'title':'Multiple Choice Question Usage Statistics',
+							   'width':600,
+							   'height':350};
+
+				// Instantiate and draw our chart, passing in some options.
+				var chart = new google.visualization.PieChart(document.getElementById('chart_mcq'));
+				//window.chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+				chart.draw(data, options);
+				
+				google.visualization.events.addListener(chart, 'select', selectHandler); 
+
+    function selectHandler(e)     {   
+       var user1 = data.getValue(chart.getSelection()[0].row, 0)
+        window.open ('/book/admin/analytics/course/'+{{course.pk}}+'/mcq/user/'+user1,'_self',false)
+
+      
+        }
+			  }
+    </script>
+    
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+       //var data = new google.visualization.DataTable();
+        window.data = new google.visualization.DataTable();
+        data.addColumn('string', 'User');
+        data.addColumn('number', 'CQ Count');
+        data.addRows([
+          
+          {% for user, cq_count in cq_dict.items%}
+                    ['{{user}}',{{cq_count}}],
+                    {% endfor %}
+        
+        ]);
+		// Set chart options
+				var options = {'title':'Coding Question Usage Statistics',
+							   'width':600,
+							   'height':350};
+
+				// Instantiate and draw our chart, passing in some options.
+				var chart = new google.visualization.PieChart(document.getElementById('chart_cq'));
+				//window.chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+				chart.draw(data, options);
+				
+				google.visualization.events.addListener(chart, 'select', selectHandler); 
+
+    function selectHandler(e)     {   
+       var user1 = data.getValue(chart.getSelection()[0].row, 0)
+        window.open ('/book/admin/analytics/course/'+{{course.pk}}+'/cq/user/'+user1,'_self',false)
+     }
+			  }
+    </script>
+    
+      <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+       //var data = new google.visualization.DataTable();
+        window.data = new google.visualization.DataTable();
+        data.addColumn('string', 'User');
+        data.addColumn('number', 'Comment Count');
+        data.addRows([
+          
+          {% for user, comment_count in comment_dict.items%}
+                    ['{{user}}',{{comment_count}}],
+                    {% endfor %}
+        
+        ]);
+		// Set chart options
+				var options = {'title':'Comments Usage Statistics',
+							   'width':600,
+							   'height':350};
+
+				// Instantiate and draw our chart, passing in some options.
+				var chart = new google.visualization.PieChart(document.getElementById('chart_comments'));
+				//window.chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+				chart.draw(data, options);
+				
+				google.visualization.events.addListener(chart, 'select', selectHandler); 
+
+    function selectHandler(e)     {   
+       var user1 = data.getValue(chart.getSelection()[0].row, 0)
+        window.open ('/book/admin/analytics/course/'+{{course.pk}}+'/comments/user/'+user1,'_self',false)
+          }
+			  }
+    </script>
+	
+    <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics course.pk %}">{{course.name}}</a> / Usage Analytics</span>
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 		
+					{% if mcq_dict %}
+						<hr>
+						<i>Click on a slice of any pie below to drill down on a user</i>
+						<hr>
+						<span id="chart_mcq"></span><hr>
+						<span id="chart_cq"></span><hr>
+						<span id="chart_comments"></span><hr>
+						
+					{% else %}
+						<p>No stats to report on.</p>
+					{% endif %}
+			{% endif %}
+   
+{% endblock %}

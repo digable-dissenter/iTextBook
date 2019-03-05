@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+			<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics course.pk %}">{{course.name}}</a> / <a href="{% url book.views.general_analytics  course.pk%}">Usage Analytics</a> / User Multiple Choice Question Use</span><hr>
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+			<b>MCQ Analysis</b><hr>
+					{% if mcq_attmpt_list %}
+					<b>Student:</b>{{user_analytics}}<hr>
+						{% for guess in mcq_attmpt_list%}
+					<b>Topic/Subtopic:</b>{{guess.question.subtopic.topic.name}}/{{guess.question.subtopic.name}}<br>
+					<b>Question:</b>{{guess.question.question}}<br>
+					<b>Answers:</b>	
+					{% for answer in answer_list%}
+						{% ifequal answer.question guess.question  %}
+						
+										{% if answer.correct  %}
+						<span style='color:green'>{{answer.answer}}</span>
+										{% else %}
+						,{{answer.answer}},
+										{% endif %}	
+						{% endifequal %}
+					{% endfor %}
+					<br>
+						{% if guess.answer_given.correct   %}
+							<b>Answer Given: </b><span style='color:green'>{{guess.answer_given}}</span>
+						{% else %}
+							<b>Answer Given: </b><span style='color:red'>{{guess.answer_given}}</span>
+						{% endif %}
+						<br>
+						<b>Date:</b>{{guess.guess_date}}
+					<br>
+					<b>Score:</b>
+					
+					{% if 1 == guess.score%}
+						<span style='color:green'>{{guess.score}}</span>
+					{% else %}
+						<span style='color:red'>{{guess.score}}</span>
+					{% endif %}
+					<br>
+					
+					
+						<hr>			
+						
+						{% endfor %}
+								
+					{% else %}
+						<p>No MCQ Attempted Yet!</p>
+					{% endif %}
+					
+			
+			{% endif %}
+{% endblock %}

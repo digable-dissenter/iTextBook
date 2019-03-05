@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+	<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics course.pk %}">{{course.name}}</a> / <a href="{% url book.views.general_analytics  course.pk%}">Usage Analytics</a> / User Coding Question Use</span><hr>
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+			<b>Coding Question Analysis</b><hr>
+					{% if cq_attmpt_list %}
+					<b>Student:</b>{{user_analytics}}<hr>
+						{% for attempt in cq_attmpt_list%}
+					<b>Topic/Subtopic:</b>{{attempt.question.subtopic.topic.name}}/{{attempt.question.subtopic.name}}	<br>
+					<b>Question:</b>{{attempt.question.text}}<br>
+					<b>Score:</b>
+					{% if 50 > attempt.score|add:"0"  %}
+						<span style='color:red'>{{attempt.score}}%</span>
+					{% elif 50 == attempt.score|add:"0"%}
+						<span style='color:orange'>{{attempt.score}}%</span>
+					{% else %}
+						<span style='color:green'>{{attempt.score}}%</span>
+					{% endif %}<br>
+					<b>File:</b>{{attempt.code}} <br>
+					<b>Feedback:</b>{{attempt.feedback}}<br>
+						<hr>			
+						
+						{% endfor %}
+								
+					{% else %}
+						<p>No Questions Attempted Yet!</p>
+					{% endif %}
+					
+			
+			{% endif %}
+  
+{% endblock %}

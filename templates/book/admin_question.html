@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>  
+   	<script type="text/javascript" src="{{MEDIA_URL}}google/jsapi"></script>  
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+							{% if create_cquestion_form %}
+			  <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - Add Coding Question</span><hr>
+					<b>Add Coding Question</b><br>
+					<b><span style="color:red">{{message}}</span></b>	
+								
+				
+							 <form enctype="multipart/form-data" action="{% url box.views.create_cq subtopic.topic.course.id subtopic.topic.id subtopic.id %}" method="POST">{% csrf_token %}
+							<div id="message">
+						   {{  create_cquestion_form.subtopic.as_hidden }}Question:<br>{{ create_cquestion_form.text}}<hr>
+						    Keyword<br>
+						  {% if keyword_error %} <b><span style="color:red">{{keyword_error}}</span></b><br>{% endif %}
+						   Keyword:<br><textarea class="tab" name="keyword" rows="1" cols="10">{{keyword}}</textarea><br>
+						  <b><span style="color:red">{{min_use_error}}</span></b><br>
+						  Minimum Use for Keyword:<br><textarea class="tab" name="min_use" rows="1" cols="5">{{min_use}}</textarea><br>
+						  <img title="you may add more keywords after creating the question by selecting edit" src="{{MEDIA_URL}}icons/question.jpg" alt="you may add more keywords after creating the question by selecting edit" width="16" height="16"/>
+						 
+						  <hr>
+						  Test Cases<br>
+						 {% if test_cases_error %} <b><span style="color:red">{{test_cases_error}}</span></b><br>{% endif %}
+						  <table><th>Case</th><th>Input</th><th>Output</th>
+						  <tr>
+							  <td>1</td>
+							  <td><b><span style="color:red">{{testinput1_error}}</span></b><br>
+									<textarea class="tab" name="testinput1" rows="1" cols="5">{{testinput1}}</textarea>
+							  </td>
+							  <td><b><span style="color:red">{{testoutput1_error}}</span></b><br>
+								<textarea class="tab" name="testoutput1" rows="1" cols="5">{{testoutput1}}</textarea>
+							  </td>
+						  </tr>
+						  <tr>
+							  <td>2</td>
+							   <td><b><span style="color:red">{{testinput2_error}}</span></b><br>
+									<textarea class="tab" name="testinput2" rows="1" cols="5">{{testinput2}}</textarea>
+							   </td>
+							  <td><b><span style="color:red"> {{testoutput2_error}}</span></b><br>
+									<textarea class="tab" name="testoutput2" rows="1" cols="5">{{testoutput2}}</textarea>
+							  </td>
+						  </tr>
+						  <tr>
+							  <td>3</td>
+							  <td> <b><span style="color:red">{{testinput3_error}}</span></b>
+									<br><textarea class="tab" name="testinput3" rows="1" cols="5">{{testinput3}}</textarea>
+								</td>
+								<td><b><span style="color:red">{{testoutput3_error}}</span></b><br>
+								<textarea class="tab" name="testoutput3" rows="1" cols="5">{{testoutput3}}</textarea>
+								</td>
+						</tr>
+						  </table>      <hr>
+							</div><!-- end message -->
+							<div id="submit">
+							<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.all_topics subtopic.topic.course.pk  %}' " />
+							<input type="submit" value="Add CQ"></div>
+						</form>
+					{% endif %}
+					
+					{% if create_mcquestion_form %}
+					
+					 <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.pk %}">{{subtopic.topic.course.name}}</a> / <a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.pk %}">{{subtopic.topic.name}}</a> / {{subtopic.name}} - Add Multiple Choice Question</span><hr>
+					<b>Add Multiple Choice Question</b><br>
+					<b><span style="color:red">{{message}}</span></b>	
+				
+				 <form enctype="multipart/form-data" action="{% url mcq.views.create_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id %}" method="POST">{% csrf_token %}
+                <div id="message">
+					
+                <p>{{  create_mcquestion_form.subtopic.as_hidden }}{{ create_mcquestion_form.question}}</p><hr>
+                Answer 1:<br><textarea class="tab" name="Answer1" rows="1" cols="37">{{answer_choice1}}</textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice1" value="answer_choice1" />
+						<label for="answer_choice1">Correct	</label></p><hr>
+						Answer 2:<br><textarea class="tab" name="Answer2" rows="1" cols="37">{{answer_choice2}}</textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice2" value="answer_choice2" />
+						<label for="answer_choice2">Correct	</label><hr>
+				Answer 3:<br><textarea class="tab" name="Answer3" rows="1" cols="37">{{answer_choice3}}</textarea><br>
+                <input type="radio" name="answer_choice" id="answer_choice3" value="answer_choice3" />
+						<label for="answer_choice3">Correct	</label><hr>
+               				       
+                </div><!-- end message -->
+                <div id="submit">
+				<input type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.all_topics subtopic.topic.course.pk %}' " />	
+				<input type="submit" value="Add MCQ"></div>
+            </form>
+			{% endif %}  
+				{% endif %}
+   </div>
+{% endblock %}

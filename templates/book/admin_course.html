@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+  
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_superuser %} 	
+				{% if create_course_form %}
+         <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / Add Course</span><hr>
+				{% if create_course_form.errors %}
+				<p class="error" style='color:Red'>Please correct the errors below:{{form.non_field_errors}}
+				</p>
+				{% endif %}
+				
+				 <form enctype="multipart/form-data" action="{% url book.views.create_course%}" method="POST">{% csrf_token %}
+               <dl>
+					<table>
+						{% for field in create_course_form %}
+							<tr>
+							<td><dt>{{field.label_tag}}{% if field.field.required %}*{% endif %}</dt></td>
+							<td><dd>{{field}}</dd>
+							{% if field.errors %} <dd class="error" style='color:Red'>{{ field.errors}}</dd>{% endif %}</td></tr>
+						{% endfor %}
+						<tr>
+							<td>Language *</td>
+							<td><dd>	<select name="language">
+								  <option value="python3.2">python3</option>
+								  <option value="perl">perl</option>
+								  <option value="c">c</option>
+								  <option value="java">java</option>
+									</select></dd>
+							</td></tr>
+					</table>
+				<dt>
+					<input  type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.main %}' " />
+					<input type="submit" value="Add Course">
+				</dt>
+			</dl>
+           </form>
+            <hr>
+			{% endif %}  
+     
+			{% if edit_course_form %}
+			       <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / {{course.name}} / Edit Course </span><hr>
+				 {% if edit_course_form.errors %}
+				<p class="error" style='color:Red'>Please correct the errors below:{{form.non_field_errors}}
+				</p>
+				{% endif %}
+				 <form enctype="multipart/form-data" action="{% url book.views.edit_course course.id%}" method="POST">{% csrf_token %}
+               <dl>
+					<table>
+						{% for field in edit_course_form %}
+							<tr>
+							<td><dt>{{field.label_tag}}{% if field.field.required %}*{% endif %}</dt></td>
+							<td><dd>{{field}}</dd>
+							{% if field.errors %} <dd class="error" style='color:Red'>{{ field.errors}}</dd>{% endif %}</td></tr>
+						{% endfor %}
+						<tr>
+							<td>Language *</td>
+							<td><dd>	<select name="language">
+								  <option {% ifequal course.language "python3.2" %} selected {% endifequal %}  value="python3.2">python3</option>
+								  <option {% ifequal course.language "perl" %} selected {% endifequal %} value="perl">perl</option>
+								  <option {% ifequal course.language "c" %} selected {% endifequal %} value="c">c</option>
+								  <option {% ifequal course.language "java" %} selected {% endifequal %}  value="java">java</option>
+									</select></dd>
+									 
+							</td></tr>
+					</table>
+				<dt>
+					<input  type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.main %}' " />
+					<input type="submit" value="Update Course">
+				</dt>
+			</dl>
+           </form>
+            
+			
+			
+			
+             <hr> 
+			{% endif %}  		
+			{% else %}
+			<p>You are not authorized to view this page</p>
+       <hr> 
+			{% endif %}
+			
+
+{% endblock %}

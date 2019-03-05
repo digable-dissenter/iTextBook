@@ -1,0 +1,92 @@
+
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+				<h3>MCQuestions ({{subtopic.name}})</h3>{% if user.is_superuser %} 	
+			{{message}}{% endif %} <hr>
+			{% if cq_list %}
+				{% if not guess_list %}
+				<span style='color:red'>{{error_msg}}</span>
+			
+							{% for question in cq_list %}
+								            <form action="{% url mcq.views.process_mcq subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" method="POST">{% csrf_token %}
+
+						<fieldset>
+								{{forloop.counter}}.{{ question.question }}  
+		{% if user.is_superuser %}
+<a href="{% url mcq.views.edit_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id%}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="Edit MCQ" width="15" height="15"/></a>
+<a href="{% url mcq.views.delete_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id%}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="Delete MCQ" width="15" height="15"/></a>
+						{% endif %}
+								{% if answer_list %}
+									{% for answer in answer_list %}
+										{% ifequal answer.question question  %}
+										<p>
+												<input type="radio" name="{{ question.id }}_choice" 
+													id="{{answer.pk}}"
+													value="{{answer.pk}}" />
+												<label for="{{answer.pk}}">
+													{{answer.answer}}
+												</label>
+											</p>
+										{% endifequal %}
+									{% endfor %}
+									 
+								{% endif %}
+							
+							</fieldset>
+						{% endfor %}
+						<input type="submit" value="Submit" />
+									</form>  
+					{% endif %}
+					{% if  guess_list %}
+					<b>Quiz Results</b>
+							{% for question in cq_list %}
+
+						<fieldset>
+								{{forloop.counter}}. {{ question.question }}  
+						{% if user.is_superuser %}
+<a href="{% url mcq.views.edit_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id%}">Edit</a>
+<a href="{% url mcq.views.delete_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id question.id%}">Delete</a>
+						{% endif %}
+								{% if answer_list %}
+									{% for answer in answer_list %}
+										{% ifequal answer.question question  %}
+										<ul>
+												<li>{% if answer.correct  %}
+												<span style='color:green'>{{answer.answer}}</span>
+													{% else %}
+													{{answer.answer}}
+													{% endif %}
+												</li>
+											</ul>
+											
+										{% endifequal %}
+									{% endfor %}
+									 
+								{% endif %}
+							{% for guess in guess_list %}
+												{% ifequal guess.question question   %}
+													{% if guess.answer_given.correct   %}
+														Your answer: <span style='color:green'>{{guess.answer_given}}</span>
+													{% else %}
+														Your answer: <span style='color:red'>{{guess.answer_given}}</span>
+													{% endif %}
+													<br>{{guess.guess_date}}
+												{% endifequal %}
+											{% endfor %}
+							</fieldset>
+						{% endfor %}
+						
+						<b>Your Score:{{final_score}}	%</b>
+								
+					{% endif %}
+				{% else %}
+					<p>No MCQuestions added yet.</p>
+				{% endif %}
+				
+			{% endif %}
+
+{% endblock %}

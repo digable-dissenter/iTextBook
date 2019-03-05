@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+
+   		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_superuser %} 	
+		
+				{% if create_topic_form %}
+        <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> /  <a href ="{% url book.views.all_topics course.pk %}">{{course.name}}</a>  /  Add Topic</span><hr>
+					<b>{{message}}</b>
+					{% if create_topic_form.errors %} 
+            <p class="error" style='color:Red'>Please correct the errors below:{{create_topic_form.non_field_errors}}
+				</p>
+				{% endif %}
+				
+				 <form enctype="multipart/form-data" action="{% url book.views.create_topic1 course.id %}" method="POST">{% csrf_token %}		
+			 <dl>
+					<table>
+						{% for field in create_topic_form %}
+						{% ifequal field.name "course" %}
+							{{ field.as_hidden }}
+						{% else %}
+							<tr>
+							<td><dt>{{field.label_tag}}{% if field.field.required %}*{% endif %}</dt></td>
+							<td><dd>{{field}}</dd>
+							{% if field.errors %} <dd class="error" style='color:Red'>{{ field.errors}}</dd>{% endif %}</td></tr>
+						{% endifequal %}
+						{% endfor %}
+					</table>
+				<dt>
+					<input  type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.all_topics course.pk %}' " />
+					<input type="submit" value="Add Topic">
+				</dt>
+			</dl>
+               
+            </form>
+			{% endif %}  
+			{% if edit_topic_form %}
+           <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> /  <a href ="{% url book.views.all_topics topic.course.pk %}">{{topic.course.name}}</a> / <a href ="{% url book.views.topic topic.course.id topic.pk %}">{{ topic.name }}</a>  /  Edit Topic</span><hr>
+					{{message}}
+					{% if edit_topic_form.errors %} 
+            <p class="error" style='color:Red'>Please correct the errors below:{{edit_topic_form.non_field_errors}}
+				</p>
+				{% endif %}
+				 <form enctype="multipart/form-data" action="{% url book.views.edit_topic topic.course.id topic.pk %}" method="POST">{% csrf_token %}
+                <dl>
+					<table>
+						{% for field in edit_topic_form %}
+						{% ifequal field.name "course" %}
+							{{ field.as_hidden }}
+						{% else %}
+							<tr>
+							<td><dt>{{field.label_tag}}{% if field.field.required %}*{% endif %}</dt></td>
+							<td><dd>{{field}}</dd>
+							{% if field.errors %} <dd class="error" style='color:Red'>{{ field.errors}}</dd>{% endif %}</td></tr>
+						{% endifequal %}
+						{% endfor %}
+					</table>
+				<dt>
+					<input  type="button" name="Cancel" value="Cancel" onclick="window.location = '{% url book.views.all_topics topic.course.pk %}' " />
+					<input type="submit" value="Update Topic">
+				</dt>
+			</dl>
+            </form>
+			{% endif %}			
+			{% else %}
+			<p>You are not authorized to view this page</p>
+			{% endif %}
+<hr>
+{% endblock %}

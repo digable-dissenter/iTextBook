@@ -1,0 +1,36 @@
+{% extends "iframebase.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+        	{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/codeform">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+			<b>Discussion Forum</b><br>{{subtopic.topic.name}}:{{ subtopic.name }}    			
+<!-- Comment form  -->
+		{% if not comments %} 
+		No Comments Yet.
+
+            <form action="{% url book.views.comments subtopic.pk %}" method="POST">{% csrf_token %}
+                <div id="message">
+               <textarea name="comments" rows="4" cols="50"></textarea><br>
+                    </div><!-- end message -->
+                <div id="submit"><input type="submit" value="Add"></div>
+            </form>
+       {% endif %}
+       {% if comments %} 
+       		<br> {% for comment in comments %}
+       		<span style='color:{% ifchanged comment.id %}{% cycle "red" "blue" "orange" "green" %}
+        {% else %}
+            grey
+        {% endifchanged %}'>
+       <br> {{comment.created_by}}</span><span style="font-size:10px;"> ({{ comment.created}})</span>:{{comment.comment_text}}{% endfor %}
+            <form action="{% url book.views.comments subtopic.pk %}" method="POST">{% csrf_token %}
+                <div id="message">
+					<br>
+                <textarea name="comments" rows="4" cols="50"></textarea><br>
+                    </div><!-- end message -->
+                <div id="submit"><input type="submit" value="Add"></div>
+                
+            </form>
+			{% endif %}
+	{% endif %} 
+
+{% endblock %}

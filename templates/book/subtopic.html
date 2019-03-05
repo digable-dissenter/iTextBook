@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+   <script type="text/javascript" src="{{MEDIA_URL}}flowplayer/flowplayer-3.2.11.min.js"></script>    
+  
+	<hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / <a href ="{% url book.views.all_topics subtopic.topic.course.id %}">{{subtopic.topic.course.name}}</a> / 
+<a href ="{% url book.views.topic subtopic.topic.course.id subtopic.topic.id %}">{{subtopic.topic}}</a> / {{subtopic}}
+</span><br>
+					
+   <div id="content">
+    <div id="left">
+      		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 	
+			
+			 <div id="menu">
+			<a title="{{subtopic}} slides" href ="{% url book.views.slides_view subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" id="slides" target="leftbox">SLIDES </a>
+			<a title="{{subtopic}} video" href="{% url book.views.video_view subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" id="video" target="leftbox"> VIDEO </a>
+			<a title="{{subtopic}} textbook material"href="{% url book.views.textbook_view subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" id="textbook" target="leftbox"> TEXTBOOK </a>
+			</div>	
+		<iframe src="{% url book.views.slides_view subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" name="leftbox" frameBorder="0" WIDTH=100% HEIGHT=600></iframe> 
+		<a title="Back to {{subtopic.topic.course.name}} Contents" href ="{% url book.views.all_topics subtopic.topic.course.id %}" target="_top"><img src="{{MEDIA_URL}}icons/back.jpg" alt="Back to {{subtopic.topic.course.name}} Contents " width="15" height="15"/> {{subtopic.topic.course.name}} Contents</a> 
+				{% endif %}
+	</div>
+  <div id="right">
+	  <div id="menu">
+			<a title="make notes on {{subtopic}}" href="{% url book.views.annotations subtopic.pk %}" id="notepad" target="rightbox"> NOTEPAD </a>
+			<a title="Discussion Forum / Comments on {{subtopic}}" href="{% url book.views.comments subtopic.pk %}" id="comments" target="rightbox">COMMENTS </a>
+			<a title="Codepad to try out your own code" href="{% url box.views.codepad %}" id="codepad" target="rightbox"> CODEPAD </a>
+			<a title="Multiple Choice Questions for {{subtopic}}" href="{% url mcq.views.subtopic_mcq subtopic.topic.course.id subtopic.topic.id subtopic.pk%}" id="mcq" target="rightbox"> MCQ </a>
+			<a title="Coding Questions for {{subtopic}}" href="{% url box.views.subtopic_quiz subtopic.topic.course.id subtopic.topic.id subtopic.pk %}" id="cq" target="rightbox"> CQ </a>
+	</div>	
+
+		<iframe src="{% url book.views.annotations subtopic.pk %}" name="rightbox" WIDTH=100% HEIGHT=600 frameBorder="0">
+
+			</iframe> 
+			<a title="Back to {{subtopic.topic.course.name}} Contents" href ="{% url book.views.all_topics subtopic.topic.course.id %}" target="_top"><img src="{{MEDIA_URL}}icons/back.jpg" alt="Back to {{subtopic.topic.course.name}} Contents"  width="15" height="15"/> {{subtopic.topic.course.name}} Contents</a> 
+	</div>
+	
+   </div>  
+{% endblock %}

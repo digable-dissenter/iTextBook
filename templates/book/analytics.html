@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+    <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> /  Analytics</span><hr>
+		{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+				{% if message %} {{message}} {% endif %}
+				{% for course in course_list %}<hr>
+					<b>{{course.name}} Contents</b>
+						{% if topic_list %}
+							<ol>
+							{% for topic in topic_list %}
+								{% if course.name == topic.course.name %}
+								<li>{% if not user.is_staff %}<a href ="{% url book.views.topic topic.course.id topic.pk %}">{{ topic.name }}</a>{% endif %}<hr>
+									{% if user.is_staff %}{{ topic.name }}<b><span style="float:right;font-size:10px;color: red"><a href="{% url  book.views.edit_topic topic.course.id topic.pk %}">Edit </a>
+									<a href="{% url  book.views.delete_topic topic.course.id topic.pk %}">Delete </a></span></b>{% endif %}</li>
+									<ul>
+										{% for subtopic in subtopic_list %}
+										
+											{% if subtopic.topic.id == topic.id %}<hr>
+												<li><a href ="{% url book.views.subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}">{{subtopic.name}}</a>
+												{% if user.is_staff %}<b><span  style="float:right; font-size:10px;color: red"><a href="{% url book.views.edit_subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}">Edit </a>
+													<a href="{% url book.views.delete_subtopic subtopic.topic.course.id subtopic.topic.id subtopic.pk %}">Delete </a>
+													<a href="{% url book.views.subtopic_mcq_analytics subtopic.pk %}">MCQ Analytics </a>
+													<a href="{% url book.views.subtopic_cq_analytics subtopic.pk %}">CQ Analytics </a>
+													<a href="{% url book.views.subtopic_comments_analytics subtopic.pk %}">Comment Analytics </a></span></b>{% endif %}</li>
+											{% endif %}
+											
+										{% endfor %}<hr>
+									<li>{% if user.is_staff %}<a href="{% url  book.views.create_subtopic1 topic.course.id topic.id %}">Add Subtopic </a>{% endif %}</li>
+									</ul>
+									
+								{% endif %}
+							{% endfor %}
+							</ol>
+							{% else %}
+									<p>No topics yet.</p>
+						{% endif %}
+						
+					{% endfor %}<hr>
+							{% if user.is_staff %}<a href="{% url book.views.general_analytics %}"> <b>General Analytics</b></a>{% endif %}			
+					{% endif %}
+{% endblock %}
+

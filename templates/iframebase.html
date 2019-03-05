@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title></title>
+     <meta name="description" content="{% block meta_description %}{% endblock %}" />
+    <meta name="author" content="{% block meta_author %}{% endblock %}" />
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/iframe.css" type="text/css" media="screen" charset="utf-8" />
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="{{MEDIA_URL}}css/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	 
+	{% if user.is_authenticated %}
+            {% block content %}{% endblock %}
+    {% endif %}
+	{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+     
+    
+</body>
+</html>
+

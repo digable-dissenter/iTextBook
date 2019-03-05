@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+  	 <link rel="stylesheet" href="{{MEDIA_URL}}css/style.css" type="text/css" media="screen" charset="utf-8" />
+  	 <hr><span id=breadcrumb>Location:<a href="{% url book.views.main %}">Courses</a> / {{course.name}}</span><hr>
+   
+       
+			{% if not user.is_authenticated %}Please <a href="/accounts/login/?next=/book/">login</a> {% endif %}
+			{% if user.is_authenticated %} 
+				{% if message %}<b><i> {{message}}</b></i><hr> {% endif %}
+				<b>{{course.name}} Contents</b> {% if user.is_staff %}<b>
+							<a title="Add Topic" style="float:right"; href="{% url  book.views.create_topic1 course.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Topic" width="15" height="15"/>Topic </a>
+							<a title="Course / User Analytics" style="float:right"; href="{% url book.views.general_analytics course.id %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="Course / User Analytics" width="15" height="15"/> Usage</a></b>{% endif %}
+				{% if topic_list %}
+					<ol>
+					{% for topic in topic_list %}<hr>
+					<li>{% if not user.is_staff %}<a href ="{% url book.views.topic topic.course.id topic.pk %}">{{ topic.name }}</a>{% endif %}
+					{% if user.is_staff %}{{ topic.name }}<span style="float:right";><a title="Edit Topic" href="{% url  book.views.edit_topic topic.course.id topic.pk %}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="edit" width="16" height="16"/></a>
+					<a title="Delete Topic" href="{% url  book.views.delete_topic topic.course.id topic.pk %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="16" height="16"/></a></span>{% endif %}</li>
+						<ul>
+							{% for subtopic in subtopic_list %}
+							 {% if subtopic.topic.id == topic.id %}<hr>
+								<li><a href ="{% url book.views.subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}">{{subtopic.name}}</a>
+								{% if user.is_staff %}<b><span style="float:right";><a title="Edit Subtopic" href="{% url book.views.edit_subtopics subtopic.topic.course.id subtopic.topic.id subtopic.pk %}"><img src="{{MEDIA_URL}}icons/edit.jpg" alt="edit" width="15" height="15"/></a>
+													<a title="Delete Subtopic" href="{% url book.views.delete_subtopic subtopic.topic.course.id subtopic.topic.id subtopic.pk %}"><img src="{{MEDIA_URL}}icons/delete.jpg" alt="delete" width="15" height="15"/></a>
+													<a title="Add Coding Question" href="{% url box.views.create_cq subtopic.topic.course.id subtopic.topic.id subtopic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add CQ" width="15" height="15"/>CQ</a>
+													<a title="Add Multiple Choice Question" href="{% url mcq.views.create_mcq subtopic.topic.course.id subtopic.topic.id subtopic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add CQ" width="15" height="15"/>MCQ</a>
+													<a title="Subtopic Multiple Choice Question Analytics" href="{% url book.views.subtopic_mcq_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="MCQ Analytics" width="15" height="15"/>MCQ</a>
+													<a title="Subtopic Coding Question Analytics" href="{% url book.views.subtopic_cq_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="CQ Analytics" width="15" height="15"/>CQ </a>
+													<a title="Subtopic Comment Analytics" href="{% url book.views.subtopic_comments_analytics subtopic.pk %}"><img src="{{MEDIA_URL}}icons/analytics-icon.jpg" alt="Comment Analytics" width="15" height="15"/>Comment</a>
+													</span></b>
+															{% endif %}</li>
+											{% endif %}
+							
+							{% endfor %}<hr>
+						<li>{% if user.is_staff %}<b><span style="float:right";><a title="Add Subtopic" href="{% url  book.views.create_subtopic1 topic.course.id topic.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Subtopic" width="15" height="15"/>Subtopic </a></span></b>{% endif %}</li>
+						</ul><br>
+					{% endfor %}
+					</ol>
+					{% else %}
+					<p>No topics yet!</p>
+				{% endif %}
+<hr>
+							{% if user.is_staff %}<b>
+							<a style="float:right"; title="Add Topic" href="{% url  book.views.create_topic1 course.id %}"><img src="{{MEDIA_URL}}icons/add.jpg" alt="Add Topic" width="15" height="15"/>Topic </a></b>{% endif %}
+			{% endif %}
+ <br>       
+<hr>
+
+{% endblock %}
+
